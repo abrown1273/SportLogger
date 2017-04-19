@@ -1,0 +1,86 @@
+@model SportLogger.Models.SkiDay
+
+@{
+    ViewData["Title"] = "Create Ski Day";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Ski Day</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="SkiDate" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <!--changed to type="text" to disable default date picker in MS Edge-->
+                <input id="datetimepicker" type="text" asp-for="SkiDate" class="form-control" />
+                <span asp-validation-for="SkiDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Resort" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="Resort" class="form-control" asp-items="@ViewBag.ResortList"></select>
+                <span asp-validation-for="Resort" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Vertical" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Vertical" class="form-control" />
+                <span asp-validation-for="Vertical" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Partners" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Partners" class="form-control" />
+                <span asp-validation-for="Partners" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewSnow24" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="NewSnow24" class="form-control" />
+                <span asp-validation-for="NewSnow24" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewSnow72" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="NewSnow72" class="form-control" />
+                <span asp-validation-for="NewSnow72" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Temperature" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Temperature" class="form-control" />
+                <span asp-validation-for="Temperature" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Comments" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea asp-for="Comments" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Comments" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
