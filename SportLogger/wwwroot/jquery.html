@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            //jQuery.support.cors = true;
+
+            $.ajax({
+                url: "https://sportlogger.azurewebsites.net/api/SkiDayApi",
+                type: 'GET',
+                dataType: "json",
+                
+                success: function (data) {
+                    WriteResponse(data);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+
+            });
+        })
+
+        function WriteResponse(skidays) {
+            var strResult = "<table><th>Date</th><th>Resort</th><th>Vertical</th><th>Partners</th>";
+            $.each(skidays, function (index, skiday) {
+                strResult += "<tr><td>" + skiday.skiDate + "</td><td> " + skiday.resort + "</td><td>" + skiday.vertical + "</td><td>" + skiday.partners + "</td></tr>";
+            });
+            strResult += "</table>";
+            $("#divResult").html(strResult);
+        }
+
+       
+
+    </script>
+</head>
+<body>
+    <h1>jQuery Examples</h1>
+    <p>
+        <div id="divResult"></div>
+    </p>
+</body>
+</html>

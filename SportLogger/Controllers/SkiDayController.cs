@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SportLogger.Data;
 using SportLogger.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SportLogger.Controllers
 {
@@ -71,6 +72,13 @@ namespace SportLogger.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,SkiDate,Resort,Vertical,Partners,NewSnow24,NewSnow72,Temperature,Comments")] SkiDay skiDay)
         {
+            if (SkiDateExists(skiDay.SkiDate))
+            {
+                var msg = string.Format("Ski date {0} already exists", skiDay.SkiDate.ToString("MM/dd/yyyy"));
+
+                ModelState.AddModelError("SkiDate", msg);
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(skiDay);
@@ -81,6 +89,7 @@ namespace SportLogger.Controllers
         }
 
         // GET: SkiDay/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -105,6 +114,7 @@ namespace SportLogger.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,SkiDate,Resort,Vertical,Partners,NewSnow24,NewSnow72,Temperature,Comments")] SkiDay skiDay)
         {
             if (id != skiDay.Id)
@@ -136,6 +146,7 @@ namespace SportLogger.Controllers
         }
 
         // GET: SkiDay/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -156,6 +167,7 @@ namespace SportLogger.Controllers
         // POST: SkiDay/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var skiDay = await _context.SkiDay.SingleOrDefaultAsync(m => m.Id == id);
@@ -167,6 +179,11 @@ namespace SportLogger.Controllers
         private bool SkiDayExists(int id)
         {
             return _context.SkiDay.Any(e => e.Id == id);
+        }
+
+        private bool SkiDateExists(DateTime date)
+        {
+            return _context.SkiDay.Any(e => e.SkiDate == date);
         }
     }
 }

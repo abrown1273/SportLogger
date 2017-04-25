@@ -7,42 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportLogger.Data;
 using SportLogger.Models;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace SportLogger.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/PagedSkiDayApi")]
-    public class PagedSkiDayApiController : Controller
-    {
-        private readonly ApplicationDbContext _context;
-        private readonly List<SkiDay> _data;
-
-        public PagedSkiDayApiController(ApplicationDbContext context)
-        {
-            _context = context;
-            _data = _context.SkiDay.ToList();
-        }
-
-        [HttpGet]
-        [Route("{pageIndex:int}/{pageSize:int}")]
-        public PagedResponse<SkiDay> Get(int pageIndex, int pageSize)
-        {
-            return new PagedResponse<SkiDay>(_data, pageIndex, pageSize);
-        }
-    }
-
-    public class PagedResponse<T>
-    {
-        public PagedResponse(IEnumerable<T> data, int pageIndex, int pageSize)
-        {
-            Data = data.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-            Total = data.Count();
-        }
-
-        public int Total { get; set; }
-        public ICollection<T> Data { get; set; }
-    }
-
     [Produces("application/json")]
     [Route("api/SkiDayApi")]
     public class SkiDayApiController : Controller
@@ -60,6 +29,7 @@ namespace SportLogger.Controllers
         [HttpGet]
         public IEnumerable<SkiDay> GetSkiDay()
         {
+            //IEnumerable<SkiDay> query = _context.SkiDay.OrderByDescending(p => p.SkiDate);
             return _context.SkiDay;
         }
 
@@ -129,6 +99,13 @@ namespace SportLogger.Controllers
         [HttpPost]
         public async Task<IActionResult> PostSkiDay([FromBody] SkiDay skiDay)
         {
+            if (SkiDateExists(skiDay.SkiDate))
+            {
+                var msg = string.Format("Ski date {0} already exists", skiDay.SkiDate.ToString("MM/dd/yyyy"));
+
+                ModelState.AddModelError("SkiDate", msg);
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -182,5 +159,44 @@ namespace SportLogger.Controllers
         {
             return _context.SkiDay.Any(e => e.Id == id);
         }
+
+        private bool SkiDateExists(DateTime date)
+        {
+            return _context.SkiDay.Any(e => e.SkiDate == date);
+        }
     }
+
+    [Produces("application/json")]
+    [Route("api/PagedSkiDayApi")]
+    public class PagedSkiDayApiController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly List<SkiDay> _data;
+
+        public PagedSkiDayApiController(ApplicationDbContext context)
+        {
+            _context = context;
+            _data = _context.SkiDay.OrderByDescending(p => p.SkiDate).ToList();
+        }
+
+        [HttpGet]
+        [Route("{pageIndex:int}/{pageSize:int}")]
+        public PagedResponse<SkiDay> Get(int pageIndex, int pageSize)
+        {
+            return new PagedResponse<SkiDay>(_data, pageIndex, pageSize);
+        }
+    }
+
+    public class PagedResponse<T>
+    {
+        public PagedResponse(IEnumerable<T> data, int pageIndex, int pageSize)
+        {
+            Data = data.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            Total = data.Count();
+        }
+
+        public int Total { get; set; }
+        public ICollection<T> Data { get; set; }
+    }
+
 }

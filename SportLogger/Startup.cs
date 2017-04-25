@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -45,13 +46,15 @@ namespace SportLogger
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+            {
+                config.SignIn.RequireConfirmedEmail = true;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+
             //services.AddMvc();
-            // Uncomment to enable SSL
-            
             services.AddMvc(options =>
             {
                 //options.SslPort = 44382;
@@ -70,6 +73,8 @@ namespace SportLogger
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,6 +92,17 @@ namespace SportLogger
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                // this is custom middleware
+                /*
+                app.UseExceptionHandler(subApp =>
+                {
+                    subApp.Run(async context =>
+                    {
+                        context.Response.ContentType = "text/html";
+                        await context.Response.WriteAsync("<strong>Application Error - Contact support.</strong>");
+                    });
+                });
+                */
             }
 
              app.UseCors(builder => builder
@@ -122,7 +138,15 @@ namespace SportLogger
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ski Day API V1");
             });
-
+            /*
+            app.Run(context => 
+            {
+                throw new InvalidOperationException("Test error to see the custom production middleware.");
+                
+                //context.Response.StatusCode = 404;
+                //return Task.FromResult(0);
+            });
+            */
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
