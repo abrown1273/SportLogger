@@ -13,14 +13,16 @@ using System.Net.Http.Headers;
 namespace SportLogger.Controllers
 {
     [Produces("application/json")]
-    [Route("api/SkiDayApi")]
+    [Route("api/[controller]")]
     public class SkiDayApiController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly List<SkiDay> _data;
 
         public SkiDayApiController(ApplicationDbContext context)
         {
             _context = context;
+            _data = _context.SkiDay.OrderByDescending(p => p.SkiDate).ToList();
         }
 
         /// <summary>
@@ -31,6 +33,26 @@ namespace SportLogger.Controllers
         {
             //IEnumerable<SkiDay> query = _context.SkiDay.OrderByDescending(p => p.SkiDate);
             return _context.SkiDay;
+        }
+
+        /// <summary>
+        /// GET: api/SkiDayApi/paged
+        /// </summary>
+        [HttpGet]
+        [Route("paged/{pageIndex:int}/{pageSize:int}")]
+        public PagedResponse<SkiDay> GetPagedSkiDay(int pageIndex, int pageSize)
+        {
+            return new PagedResponse<SkiDay>(_data, pageIndex, pageSize);
+        }
+
+        /// <summary>
+        /// GET: api/SkiDayApi/resort
+        /// </summary>
+        [HttpGet]
+        [Route("resort")]
+        public IEnumerable<ResortReference> GetResort()
+        {
+            return _context.ResortReference;
         }
 
         /// <summary>
@@ -164,39 +186,18 @@ namespace SportLogger.Controllers
         {
             return _context.SkiDay.Any(e => e.SkiDate == date);
         }
-    }
 
-    [Produces("application/json")]
-    [Route("api/PagedSkiDayApi")]
-    public class PagedSkiDayApiController : Controller
-    {
-        private readonly ApplicationDbContext _context;
-        private readonly List<SkiDay> _data;
 
-        public PagedSkiDayApiController(ApplicationDbContext context)
+        public class PagedResponse<T>
         {
-            _context = context;
-            _data = _context.SkiDay.OrderByDescending(p => p.SkiDate).ToList();
-        }
+            public PagedResponse(IEnumerable<T> data, int pageIndex, int pageSize)
+            {
+                Data = data.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                Total = data.Count();
+            }
 
-        [HttpGet]
-        [Route("{pageIndex:int}/{pageSize:int}")]
-        public PagedResponse<SkiDay> Get(int pageIndex, int pageSize)
-        {
-            return new PagedResponse<SkiDay>(_data, pageIndex, pageSize);
+            public int Total { get; set; }
+            public ICollection<T> Data { get; set; }
         }
     }
-
-    public class PagedResponse<T>
-    {
-        public PagedResponse(IEnumerable<T> data, int pageIndex, int pageSize)
-        {
-            Data = data.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-            Total = data.Count();
-        }
-
-        public int Total { get; set; }
-        public ICollection<T> Data { get; set; }
-    }
-
 }

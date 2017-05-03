@@ -23,7 +23,7 @@ namespace SportLogger.Controllers
         }
 
         /// <summary>
-        /// GET: api/SkiDayApi
+        /// GET: api/ResortApi
         /// </summary>
         [HttpGet]
         public IEnumerable<ResortReference> GetResort()
