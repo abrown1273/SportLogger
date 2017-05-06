@@ -18,8 +18,89 @@
                 </ul>
             </p>
         </div>
-
-        
     </div>
-    
 </div>
+<div class="row">
+    <div class="col-md-6">
+        <ul class="pagination">
+            <li>
+                <button id="showModal" class="btn btn-danger btn-lg">jQuery Modal</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Bootstrap Modal</button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Trigger the modal with a button -->
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>This is a bootstrap modal displayed using CSS attributes on the button.
+                <br /> data-toggle="modal" data-target="#myModal"
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="theModal" class="modal fade" data-backdrop="static" data-position="f">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="drag" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>This is a draggable boostrap modal displayed using jQuery</p>
+
+                <pre style="text-align:left">
+$(function () {
+    var showModal = function () {
+        $("#theModal").modal("show")
+            .draggable({
+                handle: ".modal-header"
+            });
+    };
+    $("#showModal").click(showModal);
+});
+                </pre>
+
+                <p>It will only close by clicking one of the modal buttons.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            var showModal = function () {
+                $("#theModal").modal("show")
+                    .draggable({
+                        handle: ".modal-header"
+                    });
+            };
+            $("#showModal").click(showModal);
+        });
+    </script>
+}

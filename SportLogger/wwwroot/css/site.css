@@ -41,6 +41,19 @@ textarea {
     width: 100%;
 }
 
+.modal-content {
+    background-color:floralwhite;
+}
+
+/* This allows a draggable modal window to not dispaly scroll window*/
+.modal {
+    overflow: hidden;
+}
+
+#drag.modal-header {
+    cursor:grabbing;
+}
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */

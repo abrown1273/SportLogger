@@ -82,5 +82,12 @@
 </div>
 
 @section Scripts {
+<script type="text/javascript">
+        jQuery('#datetimepicker').datetimepicker({
+            timepicker: false,
+            format: 'm/d/Y'
+        });
+
+</script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
