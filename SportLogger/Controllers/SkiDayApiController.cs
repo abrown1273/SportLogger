@@ -9,11 +9,13 @@ using SportLogger.Data;
 using SportLogger.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace SportLogger.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
+    [ValidateModel] // Added filter in CustomValidationResponse.cs
     public class SkiDayApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -199,5 +201,7 @@ namespace SportLogger.Controllers
             public int Total { get; set; }
             public ICollection<T> Data { get; set; }
         }
+
+        
     }
 }

@@ -15,6 +15,7 @@ using SportLogger.Models;
 using SportLogger.Services;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation.AspNetCore;
 
 namespace SportLogger
 {
@@ -32,7 +33,7 @@ namespace SportLogger
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
                 builder.AddUserSecrets<Startup>();
             }
-
+            
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
@@ -59,11 +60,10 @@ namespace SportLogger
             {
                 //options.SslPort = 44382;
                 options.Filters.Add(new RequireHttpsAttribute());
-            });
+            }).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
             
             services.AddCors();
-
-
+            
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
             {
@@ -92,17 +92,6 @@ namespace SportLogger
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // this is custom middleware
-                /*
-                app.UseExceptionHandler(subApp =>
-                {
-                    subApp.Run(async context =>
-                    {
-                        context.Response.ContentType = "text/html";
-                        await context.Response.WriteAsync("<strong>Application Error - Contact support.</strong>");
-                    });
-                });
-                */
             }
 
              app.UseCors(builder => builder
@@ -120,7 +109,7 @@ namespace SportLogger
             app.UseStaticFiles();
 
             app.UseIdentity();
-            
+
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
             app.UseFacebookAuthentication(new FacebookOptions()
             {
@@ -138,15 +127,7 @@ namespace SportLogger
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ski Day API V1");
             });
-            /*
-            app.Run(context => 
-            {
-                throw new InvalidOperationException("Test error to see the custom production middleware.");
-                
-                //context.Response.StatusCode = 404;
-                //return Task.FromResult(0);
-            });
-            */
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
