@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,8 +11,6 @@ using SportLogger.Data;
 using SportLogger.Models;
 using SportLogger.Services;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Mvc;
-using FluentValidation.AspNetCore;
 
 namespace SportLogger
 {
@@ -78,6 +73,8 @@ namespace SportLogger
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // The Configure method is used to specify how the ASP.NET application will respond to HTTP requests. 
+        // The request pipeline is configured by adding middleware components to an IApplicationBuilder instance that is provided by dependency injection.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
