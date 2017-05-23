@@ -76,6 +76,10 @@ namespace SportLogger.Controllers
             {
                 var msg = string.Format("Ski date {0} already exists", skiDay.SkiDate.ToString("MM/dd/yyyy"));
 
+                List<ResortReference> resortList = GetResortList();
+
+                ViewBag.ResortList = new SelectList(resortList, "ResortName", "ResortName");
+
                 ModelState.AddModelError("SkiDate", msg);
             }
 

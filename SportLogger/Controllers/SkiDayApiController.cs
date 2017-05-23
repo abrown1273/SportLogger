@@ -10,6 +10,7 @@ using SportLogger.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SportLogger.Controllers
 {
@@ -45,6 +46,18 @@ namespace SportLogger.Controllers
         public PagedResponse<SkiDay> GetPagedSkiDay(int pageIndex, int pageSize)
         {
             return new PagedResponse<SkiDay>(_data, pageIndex, pageSize);
+        }
+
+        public class PagedResponse<T>
+        {
+            public PagedResponse(IEnumerable<T> data, int pageIndex, int pageSize)
+            {
+                Data = data.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                Total = data.Count();
+            }
+
+            public int Total { get; set; }
+            public ICollection<T> Data { get; set; }
         }
 
         /// <summary>
@@ -159,6 +172,7 @@ namespace SportLogger.Controllers
         /// DELETE: api/SkiDayApi/5
         /// </summary>
         /// <param name="id"></param>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSkiDay([FromRoute] int id)
         {
@@ -188,20 +202,5 @@ namespace SportLogger.Controllers
         {
             return _context.SkiDay.Any(e => e.SkiDate == date);
         }
-
-
-        public class PagedResponse<T>
-        {
-            public PagedResponse(IEnumerable<T> data, int pageIndex, int pageSize)
-            {
-                Data = data.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-                Total = data.Count();
-            }
-
-            public int Total { get; set; }
-            public ICollection<T> Data { get; set; }
-        }
-
-        
     }
 }

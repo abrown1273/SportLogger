@@ -11,7 +11,9 @@ namespace SportLogger.Models
 {
     //http://www.jerriepelser.com/blog/validation-response-aspnet-core-webapi/
 
-    // 
+    // Create a custom Action Filter which will check if the ModelState is valid, 
+    // and if not it returns a custom ValidationFailedResult containing the ModelState.
+
     public class ValidateModelAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -23,9 +25,10 @@ namespace SportLogger.Models
         }
     }
 
+    // create a class for the response we want to return
     public class ValidationError
     {
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] // to ensure that the field will not be serialized in the case of a null value - i.e. for model-wide validation errors
         public string Field { get; }
 
         public string Message { get; }
@@ -51,7 +54,7 @@ namespace SportLogger.Models
                     .ToList();
         }
     }
-
+    //The last thing that remains is to create my own custom IActionResult which I will return
     public class ValidationFailedResult : ObjectResult
     {
         public ValidationFailedResult(ModelStateDictionary modelState)
